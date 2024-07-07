@@ -1,7 +1,7 @@
 package main.controllers;
 
 import main.entities.User;
-import main.repository.UserRepository;
+import main.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,26 +12,36 @@ import java.util.List;
 @RestController
 @RequestMapping("/api")
 public class UserController {
-    private UserRepository userRepository;
+    private UserService userService;
 
     @Autowired
-    UserController(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    UserController(UserService userService) {
+        this.userService = userService;
     }
     // define endpoints
+    @PostMapping("/users")
+    public User addUser(@RequestBody User userDetails) {
+        return this.userService.addNewUser(userDetails);
+    }
+
+    @PutMapping("/users")
+    public User updateUser(@RequestBody User userDetails) {
+        return this.userService.updateUser(userDetails);
+    }
+
     @GetMapping("/users")
     public List<User> getUsers() {
-        return userRepository.getUsers();
+        return userService.getUsers();
     }
 
     @GetMapping("/users/{userId}")
     public User getUserById(@PathVariable int userId) {
-        User u = this.userRepository.getUserById(userId);
-        if(u == null) {
-            throw new UserNotFoundException("User not found for id " + userId);
-        }
-        System.out.println("Fetched user " + u);
-        return this.userRepository.getUserById(userId);
+        return this.userService.getUserById(userId);
+    }
+
+    @DeleteMapping("/users/{userId}")
+    public void deleteUserById(@PathVariable int userId) {
+        this.userService.deleteUserById(userId);
     }
 
     // add exception handler
