@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class UserRestExceptionHandler {
 
-    @ExceptionHandler
+    @ExceptionHandler(Exception.class)
     public ResponseEntity<UserErrorResponse> handleException(Exception exc) {
         UserErrorResponse error = new UserErrorResponse();
         error.setCode(HttpStatus.BAD_REQUEST.value());
