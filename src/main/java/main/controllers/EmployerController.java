@@ -28,7 +28,6 @@ public class EmployerController {
     }
 
     @GetMapping("/jobs")
-    @PreAuthorize("hasRole('ROLE_RECRUITER')")
     public List<Job> getJobs(HttpServletRequest request) {
         UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
 
