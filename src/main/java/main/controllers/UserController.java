@@ -3,6 +3,8 @@ package main.controllers;
 import main.entities.LoginDto;
 import main.entities.RegisterUserDto;
 import main.entities.User;
+import main.exceptions.UserErrorResponse;
+import main.exceptions.UserNotFoundException;
 import main.services.AuthenticationService;
 import main.services.UserService;
 import main.utilities.JwtUtil;
@@ -10,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.util.HashMap;
 import java.util.List;
@@ -29,7 +32,6 @@ public class UserController {
         this.userService = userService;
         this.authenticationService = authenticationService;
     }
-    // define endpoints
     @PostMapping("/users")
     public User addUser(@RequestBody User userDetails) {
         return userService.addNewUser(userDetails);
@@ -71,8 +73,6 @@ public class UserController {
         return authenticationService.register(userDetails);
     }
 
-
-    // add exception handler
     @ExceptionHandler
     public ResponseEntity<UserErrorResponse> handleException(UserNotFoundException exc) {
         UserErrorResponse error = new UserErrorResponse();
