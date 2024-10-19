@@ -1,6 +1,7 @@
 package main.services;
 
-import main.controllers.UserNotFoundException;
+import jakarta.transaction.Transactional;
+import main.exceptions.UserNotFoundException;
 import main.entities.User;
 import main.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,10 +35,12 @@ public class UserService {
         return userFromDb.get();
     }
 
+    @Transactional
     public User updateUser(User userDetails) {
         return userRepository.save(userDetails);
     }
 
+    @Transactional
     public void deleteUserById(int userId) {
         this.userRepository.deleteById(userId);
     }

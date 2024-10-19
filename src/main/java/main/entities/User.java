@@ -3,16 +3,16 @@ package main.entities;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
 
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+@Component
 @Entity
 @Table(name="Users")
-public class User implements UserDetails {
+public class User {
     // columns
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,6 +27,9 @@ public class User implements UserDetails {
     @Column(unique = true, length = 100, nullable = false)
     private String email;
 
+    @Column(unique = true, length = 10, nullable = false)
+    private String mobile;
+
     @Column(nullable = false)
     private String password;
 
@@ -38,40 +41,16 @@ public class User implements UserDetails {
     @Column(name = "updated_at")
     private Date updatedAt;
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
-    }
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private List<Role> roles = new ArrayList<>();
 
-    @Override
-    public String getPassword() {
-        return password;
-    }
-
-    @Override
-    public String getUsername() {
-        return email;
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
+    @OneToMany(mappedBy = "jobPoster")
+    private List<Job> jobPostings = new ArrayList<>();
 
     // constructor
     public User() {
@@ -102,6 +81,10 @@ public class User implements UserDetails {
         this.email = email;
     }
 
+    public void setMobile(String mobile) {
+        this.mobile = mobile;
+    }
+
     public void setPassword(String password) {
         this.password = password;
     }
@@ -130,6 +113,14 @@ public class User implements UserDetails {
         return email;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
+    public String getMobile() {
+        return mobile;
+    }
+
     public Date getCreatedAt() {
         return createdAt;
     }
@@ -138,9 +129,15 @@ public class User implements UserDetails {
         return updatedAt;
     }
 
+    public List<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<Role> roles) {
+        this.roles = roles;
+    }
 
     // string
-
 
     @Override
     public String toString() {
@@ -149,8 +146,10 @@ public class User implements UserDetails {
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", email='" + email + '\'' +
+                ", mobile='" + mobile + '\'' +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
+                ", roles=" + roles +
                 '}';
     }
 }
